@@ -18,11 +18,11 @@ tax_data_filtered <- tax_data %>%
 # Determine which states had a change in cigarette tax each year
 tax_changes <- tax_data_filtered %>%
   group_by(Year) %>%
-  summarize(Change = n_distinct(State[Tax > lag(Tax)]))
+  summarize(Change = n_distinct(state[tax_state > lag(tax_state)]))
 
 # Calculate the proportion of states with a tax change in each year
 tax_changes <- tax_changes %>%
-  mutate(Proportion = Change / n_distinct(tax_data_filtered$State))
+  mutate(Proportion = Change / n_distinct(tax_data_filtered$state))
 
 
 # Plotting and storing as an object
@@ -33,6 +33,7 @@ question1_graph <- ggplot(tax_changes, aes(x = as.factor(Year), y = Proportion))
        y = "Proportion") +
   theme_minimal()
 
+question1_graph
 
 #Question 2: 
 
@@ -71,12 +72,9 @@ question2_graph <- ggplot(merged_data, aes(x = Year)) +
 library(dplyr)
 library(ggplot2)
 
-# Assuming your tax_data dataset has columns like "State", "Year", "cost_per_pack", and "population"
-# Adjust column names accordingly if needed
-
 # Calculate the price increase for each state
 price_increase <- tax_data %>%
-  group_by(State) %>%
+  group_by(state) %>%
   summarize(price_increase = last(cost_per_pack) - first(cost_per_pack))
 
 # Identify the 5 states with the highest price increases
@@ -85,15 +83,15 @@ top_states <- price_increase %>%
 
 # Filter the data for the top 5 states
 top_states_data <- tax_data %>%
-  filter(State %in% top_states$State)
+  filter(state %in% top_states$state)
 
 # Calculate the average number of packs sold per capita for each year
 avg_packs_per_capita <- top_states_data %>%
   group_by(Year) %>%
-  summarize(avg_packs_per_capita = mean(cost_per_pack / population, na.rm = TRUE))
+  summarize(avg_packs_per_capita = mean(sales_per_capita, na.rm = TRUE))
 
 # Plotting and storing as an object
-question3_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_capita, color = factor(State))) +
+question3_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_capita)) +
   geom_line(size = 1.5) +
   labs(title = "Average Packs Sold Per Capita (Top 5 States with Highest Price Increases)",
        x = "Year",
@@ -101,17 +99,15 @@ question3_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_
        color = "State") +
   theme_minimal()
 
-
+question3_graph
 #Question 4 
 library(dplyr)
 library(ggplot2)
 
-# Assuming your tax_data dataset has columns like "State", "Year", "cost_per_pack", and "population"
-# Adjust column names accordingly if needed
 
 # Calculate the price increase for each state
 price_increase <- tax_data %>%
-  group_by(State) %>%
+  group_by(state) %>%
   summarize(price_increase = last(cost_per_pack) - first(cost_per_pack))
 
 # Identify the 5 states with the lowest price increases
@@ -120,15 +116,15 @@ bottom_states <- price_increase %>%
 
 # Filter the data for the bottom 5 states
 bottom_states_data <- tax_data %>%
-  filter(State %in% bottom_states$State)
+  filter(state %in% bottom_states$state)
 
 # Calculate the average number of packs sold per capita for each year
 avg_packs_per_capita <- bottom_states_data %>%
   group_by(Year) %>%
-  summarize(avg_packs_per_capita = mean(cost_per_pack / population, na.rm = TRUE))
+  summarize(avg_packs_per_capita = mean(sales_per_capita, na.rm = TRUE))
 
 # Plotting and storing as an object
-question4_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_capita, color = factor(State))) +
+question4_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_capita)) +
   geom_line(size = 1.5) +
   labs(title = "Average Packs Sold Per Capita (Top 5 States with Lowest Price Increases)",
        x = "Year",
@@ -158,8 +154,6 @@ summary(elasticity_model)
 install.packages("AER")
 library(AER)
 
-# Assuming your tax_data dataset has columns like "Year", "log_sales", "log_prices", and "tax_dollar"
-# Adjust column names accordingly if needed
 
 # Filter data for the time period from 1970 to 1990
 data_subset <- tax_data %>%
@@ -195,6 +189,8 @@ iv_model <- ivreg(log_sales ~ log_prices | log_tax_dollar, data = data_subset)
 first_stage_results <- coef(iv_model)[c("log_prices", "log_tax_dollar")]
 reduced_form_results <- coef(iv_model)[c("(Intercept)", "log_prices")]
 
+first_stage_results
+reduced_form_results
 # Display results
 cat("First Stage Results:\n")
 print(first_stage_results)

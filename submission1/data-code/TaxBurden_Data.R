@@ -34,7 +34,7 @@ cig.data <- cig.data %>%
          measure)
          
 final.data <- pivot_wider(cig.data, 
-                         id_cols = c("state","Year","measure"),
+                         id_cols = c("state","Year"),
                          names_from = "measure",
                          values_from = "value") %>%
   arrange(state, Year)
@@ -50,13 +50,14 @@ cpi.data <- cpi.data %>%
   group_by(Year) %>%
   summarize(index=mean(index, na.rm=TRUE))
 
+print(cpi.data, n = 100)
 
 
 # Form final dataset ------------------------------------------------------
 # adjust to 2010 dollars
 final.data <- final.data %>%
   left_join(cpi.data, by="Year") %>%
-  mutate(price_cpi=cost_per_pack*(218/index))
+  mutate(price_cpi=cost_per_pack*(230/index))
 
 write_tsv(final.data,"data/output/TaxBurden_Data.txt",append=FALSE,col_names=TRUE)
 write_rds(final.data,"data/output/TaxBurden_Data.rds")
