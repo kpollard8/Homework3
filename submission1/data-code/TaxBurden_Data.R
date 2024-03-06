@@ -59,6 +59,7 @@ final.data <- final.data %>%
   left_join(cpi.data, by="Year") %>%
   mutate(price_cpi=cost_per_pack*(230/index))
 
+
 write_tsv(final.data,"data/output/TaxBurden_Data.txt",append=FALSE,col_names=TRUE)
 write_rds(final.data,"data/output/TaxBurden_Data.rds")
 

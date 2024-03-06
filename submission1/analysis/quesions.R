@@ -10,6 +10,11 @@ library(ggplot2)
 # Load the dataset
 tax_data <- readRDS("data/output/TaxBurden_Data.rds")
 
+#tax_data <- tax_data %>% group_by(state) arrange 9state, Year) %>% 
+  #mutate(tax_change 
+#rice_cpi_2012 = cost_per_pack * (230/index)
+
+
 #Question 1
 # Filter data for years 1970 to 1985
 tax_data_filtered <- tax_data %>%
