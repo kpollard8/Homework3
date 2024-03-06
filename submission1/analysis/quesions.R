@@ -199,100 +199,75 @@ cat("\nReduced-Form Results:\n")
 print(reduced_form_results)
 
 
-#Question 9 
+#Question 9
+##Repeat question 6
 
-#Question 1 repeated
-# Filter data for years 1991 to 2015
-tax_data_filtered <- tax_data %>%
+# Filter data for the time period from 1991 to 2015
+data_subset_2 <- tax_data %>%
   filter(Year >= 1991 & Year <= 2015)
 
-# Determine which states had a change in cigarette tax each year
-tax_changes <- tax_data_filtered %>%
-  group_by(Year) %>%
-  summarize(Change = n_distinct(State[Tax > lag(Tax)]))
+# Log-transform sales_per_capita and cost_per_pack
+data_subset_2$log_sales <- log(data_subset_2$sales_per_capita)
+data_subset_2$log_prices <- log(data_subset_2$cost_per_pack)
 
-# Calculate the proportion of states with a tax change in each year
-tax_changes <- tax_changes %>%
-  mutate(Proportion = Change / n_distinct(tax_data_filtered$State))
+# Perform log-log regression
+elasticity_model <- lm(log_sales ~ log_prices, data = data_subset_2)
 
-# Create bar graph
-question9.1_graph <- ggplot(tax_changes, aes(x = as.factor(Year), y = Proportion)) +
-  geom_bar(stat = "identity", fill = "skyblue") +
-  labs(title = "Proportion of States with a Change in Cigarette Tax (1991-2015)",
-       x = "Year",
-       y = "Proportion") +
-  theme_minimal()
+# Display regression summary
+summary(elasticity_model)
 
-#question 2 repeated
+# Convert the summary of the model into a tidy data frame
+tidy_summary2 <- tidy(summary(elasticity_model))
 
-library(dplyr)
-library(ggplot2)
+# Display the tidy summary as a table
+print(tidy_summary2)
 
-# Assuming your tax_data dataset has columns like "Year", "tax_dollar", and "cost_per_pack"
-# Adjust column names accordingly if needed
-
-# Filter data for the period from 1991 to 2015
-data_subset <- tax_data %>%
+##Repeat Quesion 7
+# Filter data for the time period from 1991 to 2015
+data_subset_2 <- tax_data %>%
   filter(Year >= 1991 & Year <= 2015)
 
-# Calculate average tax and average price per year
-average_tax <- data_subset %>%
-  group_by(Year) %>%
-  summarize(avg_tax = mean(tax_dollar, na.rm = TRUE))
+# Log-transform sales, prices, and tax_dollar
+data_subset_2$log_sales <- log(data_subset_2$sales_per_capita)
+data_subset_2$log_prices <- log(data_subset_2$cost_per_pack)
+data_subset_2$log_tax_dollar <- log(data_subset_2$tax_dollar)
 
-average_price <- data_subset %>%
-  group_by(Year) %>%
-  summarize(avg_price = mean(cost_per_pack, na.rm = TRUE))
+# Perform instrumental variable regression
+iv_model_2 <- ivreg(log_sales ~ log_prices | log_tax_dollar, data = data_subset_2)
 
-# Merge the two datasets based on the "Year" column
-merged_data <- merge(average_tax, average_price, by = "Year", all = TRUE)
+# Display instrumental variable regression summary
+summary(iv_model_2)
 
-# Plotting
-question9.2_graph <- ggplot(merged_data, aes(x = Year)) +
-  geom_line(aes(y = avg_tax, color = "Average Tax"), size = 1.5) +
-  geom_line(aes(y = avg_price, color = "Average Price"), linetype = "dashed", size = 1.5) +
-  labs(title = "Average Tax and Price of Cigarettes (1991-2015)",
-       x = "Year",
-       y = "Average Amount (in 2012 dollars)",
-       color = "Legend") +
-  scale_color_manual(values = c("Average Tax" = "blue", "Average Price" = "red")) +
-  theme_minimal()
+# Make into a table
+# Extract coefficient estimates from the model summary
+coefficients2 <- coef(summary(iv_model_2))
 
-#question 3 repeated 
+# Display coefficient estimates in a table format
+print(coefficients2)
 
-library(dplyr)
-library(ggplot2)
-
-# Filter data for the period from 1991 to 2015
-data_subset <- tax_data %>%
+##Repeat Question 8
+# Filter data for the time period from 1991 to 2015
+data_subset_2 <- tax_data %>%
   filter(Year >= 1991 & Year <= 2015)
 
-# Calculate the price increase for each state
-price_increase <- data_subset %>%
-  group_by(state) %>%
-  summarize(price_increase = last(cost_per_pack) - first(cost_per_pack))
+# Log-transform sales, prices, and tax_dollar
+data_subset_2$log_sales <- log(data_subset_2$sales_per_capita)
+data_subset_2$log_prices <- log(data_subset_2$cost_per_pack)
+data_subset_2$log_tax_dollar <- log(data_subset_2$tax_dollar)
 
-# Identify the 5 states with the highest price increases
-top_states <- price_increase %>%
-  top_n(5, wt = price_increase)
+# Perform instrumental variable regression
+iv_model_2 <- ivreg(log_sales ~ log_prices | log_tax_dollar, data = data_subset_2)
 
-# Filter the data for the top 5 states
-top_states_data <- data_subset %>%
-  filter(state %in% top_states$state)
+# Extract first stage and reduced-form results
+first_stage_results2 <- coef(iv_model_2)[c("log_prices", "log_tax_dollar")]
+reduced_form_results2 <- coef(iv_model_2)[c("(Intercept)", "log_prices")]
 
-# Calculate the average number of packs sold per capita for each year
-avg_packs_per_capita <- top_states_data %>%
-  group_by(Year, state) %>%
-  summarize(avg_packs_per_capita = mean(sales_per_capita, na.rm = TRUE))
+# Display results
+print(first_stage_results2)
+#log_prices is -0.7626495  
 
-# Plotting
-question9.3_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_capita, color = factor(state))) +
-  geom_line(size = 1.5) +
-  labs(title = "Average Packs Sold Per Capita (Top 5 States with Highest Price Increases, 1991-2015)",
-       x = "Year",
-       y = "Average Packs Sold Per Capita",
-       color = "State") +
-  theme_minimal()
+print(reduced_form_results2)
+#intercept is   5.1575124 and log_prices is -0.7626495 
 
 rm(list=c("tax_data", "data_subset", "merged_data","tax_data_filtered"))
 save.image("submission1/Hw3_workspace.Rdata")
