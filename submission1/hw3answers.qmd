@@ -33,7 +33,7 @@ knitr::opts_chunk$set(warning = FALSE)
 load("Hw3_workspace.Rdata")
 ```
 
-Here is the link to my GitHub Repository: 
+Here is the link to my GitHub Repository: https://github.com/kpollard8/Homework3
 
 Here are my answers for Homework 3. I do the coding in a separate `R` script, but here is the cleaned-up version. I run the analysis separately, save the workspace with only the summary stats, figures, and tables that I need, and then load the workspace in the final qmd. My analysis file with answers and code to all the questions is available in the analysis folder. 
 
