@@ -37,8 +37,7 @@ Here is the link to my GitHub Repository:
 
 Here are my answers for Homework 3. I do the coding in a separate `R` script, but here is the cleaned-up version. I run the analysis separately, save the workspace with only the summary stats, figures, and tables that I need, and then load the workspace in the final qmd. My analysis file with answers and code to all the questions is available in the analysis folder. 
 
-\newpage
-# Duplicate Report 
+\newpage 
 
 \vspace{.2in}
 \noindent 1. Present a bar graph showing the proportion of states with a change in their cigarette tax in each year from 1970 to 1985. <br>
@@ -46,7 +45,85 @@ Here are my answers for Homework 3. I do the coding in a separate `R` script, bu
 ```{r}
 #| echo: false
 #| label: taxchange
-#| fig-cap: taxchangegraph
+#| fig-cap: Question 1 Graph
 
-
+question1_graph
 ```
+
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 2. Plot on a single graph the average tax (in 2012 dollars) on cigarettes and the average price of a pack of cigarettes from 1970 to 2018. <br>
+
+```{r}
+#| echo: false
+#| label: avgtax2012
+#| fig-cap: Question 2 Graph
+
+question2_graph
+```
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 3. Identify the 5 states with the highest increases in cigarette prices (in dollars) over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018. <br>
+
+```{r}
+#| echo: false
+#| label: priceincrease
+#| fig-cap: Question 3 Graph
+
+question3_graph
+```
+
+\newpage 
+
+\vspace{.2in}
+\noindent 4. Identify the 5 states with the lowest increases in cigarette prices over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018. <br>
+
+
+```{r}
+#| echo: false
+#| label: priceincreaselow
+#| fig-cap: Question 4 Graph
+
+question4_graph
+```
+
+\newpage 
+
+\vspace{.2in}
+\noindent 5. Compare the trends in sales from the 5 states with the highest price increases to those with the lowest price increases. <br>
+
+\newpage 
+
+\vspace{.2in}
+\noindent 6. Focusing only on the time period from 1970 to 1990, regress log sales on log prices to estimate the price elasticity of demand over that period. Interpret your results. <br>
+
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 7. Again limiting to 1970 to 1990, regress log sales on log prices using the total (federal and state) cigarette tax (in dollars) as an instrument for log prices. Interpret your results and compare your estimates to those without an instrument. Are they different? If so, why? <br>
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 8. Show the first stage and reduced-form results from the instrument. <br>
+
+\newpage 
+
+\vspace{.2in}
+\noindent 9. Repeat questions 1-3 focusing on the period from 1991 to 2015. <br>
+
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 10. Compare your elasticity estimates from 1970-1990 versus those from 1991-2015. Are they different? If so, why? <br>

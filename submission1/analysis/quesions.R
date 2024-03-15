@@ -11,14 +11,12 @@ library(ggplot2)
 tax_data <- readRDS("data/output/TaxBurden_Data.rds")
 
  
-#tax_data <- tax_data %>% group_by(state) %>% arrange(state, Year) %>%
-  #mutate(tax_change = tax_state - lag(tax_state),
-         #tax_change_d = ifelse(tax_change==0,0,1),
-         #price_cpi_2012 = cost_per_pack*(cpi_2012/index),
-         #total_tax_cpi_2012=tax_dollar*(cpi_2012/index),
-         #ln_tax_2012=log(total_tax_cpi_2012),
-         #ln_sales=log(sales_per_capita),
-         #ln_price_2012=log(price_cpi_2012))
+tax_data <- tax_data %>% group_by(state) %>% arrange(state, Year) %>%
+  mutate(price_cpi_2012 = cost_per_pack*(cpi_2012/index),
+         total_tax_cpi_2012=tax_dollar*(cpi_2012/index),
+         ln_tax_2012=log(total_tax_cpi_2012),
+         ln_sales=log(sales_per_capita),
+         ln_price_2012=log(price_cpi_2012))
  
 #Question 1
 # Filter data for years 1970 to 1985
@@ -55,11 +53,11 @@ library(ggplot2)
 # Calculate average tax and average price per year
 average_tax <- tax_data %>%
   group_by(Year) %>%
-  summarize(avg_tax = mean(tax_dollar, na.rm = TRUE))
+  summarize(avg_tax = mean(total_tax_cpi_2012, na.rm = TRUE))
 
 average_price <- tax_data %>%
   group_by(Year) %>%
-  summarize(avg_price = mean(cost_per_pack, na.rm = TRUE))
+  summarize(avg_price = mean(price_cpi_2012, na.rm = TRUE))
 
 # Merge the two datasets based on the "Year" column
 merged_data <- merge(average_tax, average_price, by = "Year", all = TRUE)
@@ -76,6 +74,7 @@ question2_graph <- ggplot(merged_data, aes(x = Year)) +
   scale_color_manual(values = c("Average Tax" = "blue", "Average Price" = "red")) +
   theme_minimal()
 
+question2_graph
 
 #Question 3
 
@@ -85,7 +84,7 @@ library(ggplot2)
 # Calculate the price increase for each state
 price_increase <- tax_data %>%
   group_by(state) %>%
-  summarize(price_increase = last(cost_per_pack) - first(cost_per_pack))
+  summarize(price_increase = last(price_cpi_2012) - first(price_cpi_2012))
 
 # Identify the 5 states with the highest price increases
 top_states <- price_increase %>%
@@ -110,6 +109,8 @@ question3_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_
   theme_minimal()
 
 question3_graph
+
+
 #Question 4 
 library(dplyr)
 library(ggplot2)
@@ -118,7 +119,7 @@ library(ggplot2)
 # Calculate the price increase for each state
 price_increase <- tax_data %>%
   group_by(state) %>%
-  summarize(price_increase = last(cost_per_pack) - first(cost_per_pack))
+  summarize(price_increase = last(price_cpi_2012) - first(price_cpi_2012))
 
 # Identify the 5 states with the lowest price increases
 bottom_states <- price_increase %>%
@@ -141,6 +142,8 @@ question4_graph <- ggplot(avg_packs_per_capita, aes(x = Year, y = avg_packs_per_
        y = "Average Packs Sold Per Capita",
        color = "State") +
   theme_minimal()
+
+question4_graph
 
 #Question 6 
 
@@ -172,10 +175,10 @@ data_subset <- tax_data %>%
 # Log-transform sales, prices, and tax_dollar
 data_subset$log_sales <- log(data_subset$sales_per_capita)
 data_subset$log_prices <- log(data_subset$cost_per_pack)
-data_subset$log_tax_dollar <- log(data_subset$tax_dollar)
+data_subset$ln_tax_2012 <- log(data_subset$tax_dollar)
 
 # Perform instrumental variable regression
-iv_model <- ivreg(log_sales ~ log_prices | log_tax_dollar, data = data_subset)
+iv_model <- ivreg(log_sales ~ log_prices | ln_tax_2012, data = data_subset)
 
 # Display instrumental variable regression summary
 summary(iv_model)
@@ -190,10 +193,10 @@ data_subset <- tax_data %>%
 # Log-transform sales, prices, and tax_dollar
 data_subset$log_sales <- log(data_subset$sales_per_capita)
 data_subset$log_prices <- log(data_subset$cost_per_pack)
-data_subset$log_tax_dollar <- log(data_subset$tax_dollar)
+data_subset$ln_tax_2012 <- log(data_subset$tax_dollar)
 
 # Perform instrumental variable regression
-iv_model <- ivreg(log_sales ~ log_prices | log_tax_dollar, data = data_subset)
+iv_model <- ivreg(log_sales ~ log_prices | ln_tax_2012, data = data_subset)
 
 # Extract first stage and reduced-form results
 first_stage_results <- coef(iv_model)[c("log_prices", "log_tax_dollar")]
@@ -216,34 +219,33 @@ print(reduced_form_results)
 data_subset_2 <- tax_data %>%
   filter(Year >= 1991 & Year <= 2015)
 
+data_subset_2 <- na.omit(data_subset)
+
 # Log-transform sales_per_capita and cost_per_pack
 data_subset_2$log_sales <- log(data_subset_2$sales_per_capita)
 data_subset_2$log_prices <- log(data_subset_2$cost_per_pack)
 
 # Perform log-log regression
-elasticity_model <- lm(log_sales ~ log_prices, data = data_subset_2)
+elasticity_model2 <- lm(log_sales ~ log_prices, data = data_subset_2)
 
 # Display regression summary
-summary(elasticity_model)
+summary(elasticity_model2)
 
-# Convert the summary of the model into a tidy data frame
-tidy_summary2 <- tidy(summary(elasticity_model))
-
-# Display the tidy summary as a table
-print(tidy_summary2)
 
 ##Repeat Quesion 7
 # Filter data for the time period from 1991 to 2015
 data_subset_2 <- tax_data %>%
   filter(Year >= 1991 & Year <= 2015)
 
+data_subset_2 <- na.omit(data_subset)
+
 # Log-transform sales, prices, and tax_dollar
 data_subset_2$log_sales <- log(data_subset_2$sales_per_capita)
 data_subset_2$log_prices <- log(data_subset_2$cost_per_pack)
-data_subset_2$log_tax_dollar <- log(data_subset_2$tax_dollar)
+data_subset_2$ln_tax_2012 <- log(data_subset_2$tax_dollar)
 
 # Perform instrumental variable regression
-iv_model_2 <- ivreg(log_sales ~ log_prices | log_tax_dollar, data = data_subset_2)
+iv_model_2 <- ivreg(log_sales ~ log_prices | ln_tax_2012, data = data_subset_2)
 
 # Display instrumental variable regression summary
 summary(iv_model_2)
@@ -260,13 +262,15 @@ print(coefficients2)
 data_subset_2 <- tax_data %>%
   filter(Year >= 1991 & Year <= 2015)
 
+data_subset_2 <- na.omit(data_subset)
+
 # Log-transform sales, prices, and tax_dollar
 data_subset_2$log_sales <- log(data_subset_2$sales_per_capita)
 data_subset_2$log_prices <- log(data_subset_2$cost_per_pack)
-data_subset_2$log_tax_dollar <- log(data_subset_2$tax_dollar)
+data_subset_2$ln_tax_2012 <- log(data_subset_2$tax_dollar)
 
 # Perform instrumental variable regression
-iv_model_2 <- ivreg(log_sales ~ log_prices | log_tax_dollar, data = data_subset_2)
+iv_model_2 <- ivreg(log_sales ~ log_prices | ln_tax_2012, data = data_subset_2)
 
 # Extract first stage and reduced-form results
 first_stage_results2 <- coef(iv_model_2)[c("log_prices", "log_tax_dollar")]
@@ -279,5 +283,5 @@ print(first_stage_results2)
 print(reduced_form_results2)
 #intercept is   5.1575124 and log_prices is -0.7626495 
 
-rm(list=c("tax_data", "data_subset", "merged_data","tax_data_filtered"))
+rm(list=c("tax_data", "data_subset", "merged_data","tax_data_filtered", "data_subset_2", "top_states", "top_states_dates"))
 save.image("submission1/Hw3_workspace.Rdata")
