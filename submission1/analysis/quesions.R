@@ -161,6 +161,22 @@ elasticity_model <- lm(log_sales ~ log_prices, data = data_subset)
 # Display regression summary
 summary(elasticity_model)
 
+library(broom)
+
+# Tidy the regression summary
+tidy_summary <- tidy(elasticity_model)
+
+# Store the coefficients and their standard errors
+coefficients <- tidy_summary$estimate
+std_errors <- tidy_summary$std.error
+
+# Combine coefficients and standard errors into a data frame
+regression_table <- data.frame(Coefficient = coefficients, `Standard Error` = std_errors)
+
+# Print the regression table
+print(regression_table)
+
+
 #Question 7 
 # Install and load the AER package if not already installed
 
@@ -183,6 +199,17 @@ iv_model <- ivreg(log_sales ~ log_prices | ln_tax_2012, data = data_subset)
 # Display instrumental variable regression summary
 summary(iv_model)
 
+# Extract coefficients and standard errors
+coefficients7 <- coef(iv_model)
+standard_errors7 <- sqrt(diag(vcovHC(iv_model)))
+
+# Combine coefficients and standard errors into a data frame
+iv_results <- data.frame(
+  Variable = c( "log_prices", "ln_tax_2012"),
+  Coefficient = coefficients7,
+  `Standard Error` = standard_errors7
+)
+
 
 #Question 8 
 
@@ -199,7 +226,7 @@ data_subset$ln_tax_2012 <- log(data_subset$tax_dollar)
 iv_model <- ivreg(log_sales ~ log_prices | ln_tax_2012, data = data_subset)
 
 # Extract first stage and reduced-form results
-first_stage_results <- coef(iv_model)[c("log_prices", "log_tax_dollar")]
+first_stage_results <- coef(iv_model)[c("log_prices", "ln_tax_2012")]
 reduced_form_results <- coef(iv_model)[c("(Intercept)", "log_prices")]
 
 first_stage_results
@@ -210,7 +237,6 @@ print(first_stage_results)
 
 cat("\nReduced-Form Results:\n")
 print(reduced_form_results)
-
 
 #Question 9
 ##Repeat question 6
@@ -232,6 +258,19 @@ elasticity_model2 <- lm(log_sales ~ log_prices, data = data_subset_2)
 summary(elasticity_model2)
 
 
+# Tidy the regression summary
+tidy_summary2 <- tidy(elasticity_model2)
+
+# Store the coefficients and their standard errors
+coefficients2 <- tidy_summary2$estimate
+std_errors2 <- tidy_summary2$std.error
+
+# Combine coefficients and standard errors into a data frame
+regression_table_2 <- data.frame(Coefficient = coefficients2, `Standard Error` = std_errors2)
+
+# Print the regression table
+print(regression_table_2)
+
 ##Repeat Quesion 7
 # Filter data for the time period from 1991 to 2015
 data_subset_2 <- tax_data %>%
@@ -250,12 +289,17 @@ iv_model_2 <- ivreg(log_sales ~ log_prices | ln_tax_2012, data = data_subset_2)
 # Display instrumental variable regression summary
 summary(iv_model_2)
 
-# Make into a table
-# Extract coefficient estimates from the model summary
-coefficients2 <- coef(summary(iv_model_2))
+# Extract coefficients and standard errors
+coefficients7_2 <- coef(iv_model_2)
+standard_errors7_2 <- sqrt(diag(vcovHC(iv_model_2)))
 
-# Display coefficient estimates in a table format
-print(coefficients2)
+# Combine coefficients and standard errors into a data frame
+iv_results2 <- data.frame(
+  Variable = c("log_prices", "ln_tax_2012"),
+  Coefficient = coefficients7_2,
+  `Standard Error` = standard_errors7_2
+)
+
 
 ##Repeat Question 8
 # Filter data for the time period from 1991 to 2015
@@ -283,5 +327,5 @@ print(first_stage_results2)
 print(reduced_form_results2)
 #intercept is   5.1575124 and log_prices is -0.7626495 
 
-rm(list=c("tax_data", "data_subset", "merged_data","tax_data_filtered", "data_subset_2", "top_states", "top_states_dates"))
+rm(list=c("tax_data", "data_subset", "merged_data","tax_data_filtered", "data_subset_2", "top_states", "top_states_data"))
 save.image("submission1/Hw3_workspace.Rdata")
