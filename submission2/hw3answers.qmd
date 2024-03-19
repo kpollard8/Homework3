@@ -112,17 +112,18 @@ regression_table
 #| label: logs
 #| tbl-cap: "Log Regression"
 
-#library(kableExtra)
-#options(knitr.kable.NA = 0)
-#knitr::kable(regression_table, 
-             #col.names=c("Coefficients","Standard Errors"),
-             #format.args=list(big.mark=","), booktabs = TRUE) %>%
-             #kable_styling(latex_options=c("scale_down"))
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(regression_table, 
+             col.names=c("Betas", "Coefficients","Standard Errors"),
+             format.args=list(big.mark=","), booktabs = TRUE) %>%
+             kable_styling(latex_options=c("scale_down"))
 
 ```
 
-The intercept (4.750402) represents the estimated log sales when log prices are zero. This value is highly significant (p value very small) indicating a strong positive relationship between log prices and log sales.
-The coefficient for log prices (-0.171540) represents the estimated change in log sales for a one-unit increase in log prices. This coefficient is also highly significant, with another very small p value, suggesting a negative relationship between log prices and log sales.
+
+The intercept (5.43) represents the estimated log sales when log prices are zero. This value is highly significant (p value very small) indicating a strong positive relationship between log prices and log sales.
+The coefficient for log prices (-0.8094384) represents the estimated change in log sales for a one-unit increase in log prices. This coefficient is also highly significant, with another very small p value, suggesting a negative relationship between log prices and log sales.
 
 \newpage 
 
@@ -135,17 +136,17 @@ The coefficient for log prices (-0.171540) represents the estimated change in lo
 #| label: IV
 #| tbl-cap: "IV Model for Question 7"
 
-#library(kableExtra)
-#options(knitr.kable.NA = 0)
-#knitr::kable(iv_results, 
-             #col.names = c("Variable", "Coefficient", "Standard Error"),
-             #align = "c",
-             #caption = "Instrumental Variable Regression Results")
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(iv_results, 
+             col.names = c("Betas", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "Instrumental Variable Regression Results")
 ```
 
-The estimated intercept is 4.710109, which represents the estimated log sales when log prices are zero. This value is highly significant, with a p value close to 0, indicating a strong positive relationship between log prices and log sales when using the instrument.
+The estimated intercept is 5.42, which represents the estimated log sales when log prices are zero. This value is highly significant, with a p value close to 0, indicating a strong positive relationship between log prices and log sales when using the instrument.
 
-Coefficient for Log Prices (Price Elasticity): The estimated coefficient for log prices is -0.284348. This coefficient represents the estimated change in log sales for a one-unit increase in log prices, considering the influence of the instrument. It is highly significant (small p value), suggesting a negative relationship between log prices and log sales, indicating that as log prices increase, log sales tend to decrease.
+Coefficient for Log Prices (Price Elasticity): The estimated coefficient for log prices is -0.7955235. This coefficient represents the estimated change in log sales for a one-unit increase in log prices, considering the influence of the instrument. It is highly significant (small p value), suggesting a negative relationship between log prices and log sales, indicating that as log prices increase, log sales tend to decrease.
 
 
 \newpage 
@@ -159,12 +160,12 @@ First stage and reduced form
 #| label: firstandreduced
 #| tbl-cap: "First and Second Stages for Question 8"
 
-#library(kableExtra)
-#options(knitr.kable.NA = 0)
-#knitr::kable(regression_summary8_2, 
-             #col.names = c("Regression", "Coefficient", "Standard Error"),
-             #align = "c",
-             #caption = "First and Second Stage Regression Results")
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(regression_summary8_2, 
+             col.names = c("Regression", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "First and Second Stage Regression Results")
 
 ```
 
@@ -179,14 +180,14 @@ Question 6 repeated for 1991-2015
 ```{r} 
 #| echo: false
 #| label: logs2
-#| tbl-cap: "Log Regression Repeated"
+#| tbl-cap: "Log Regression 2"
 
-#library(kableExtra)
-#options(knitr.kable.NA = 0)
-#knitr::kable(regression_table2, 
-             #col.names=c("Coefficients","Standard Errors"),
-             #format.args=list(big.mark=","), booktabs = TRUE) %>%
-             #kable_styling(latex_options=c("scale_down"))
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(regression_table_2, 
+             col.names=c("Betas", "Coefficients","Standard Errors"),
+             format.args=list(big.mark=","), booktabs = TRUE) %>%
+             kable_styling(latex_options=c("scale_down"))
 
 ```
 
@@ -198,12 +199,12 @@ Question 7 repeated for 1991-2015
 #| label: IV2
 #| tbl-cap: "IV Model for Question 7"
 
-#library(kableExtra)
-#options(knitr.kable.NA = 0)
-#knitr::kable(iv_results_2, 
-             #col.names = c("Variable", "Coefficient", "Standard Error"),
-             #align = "c",
-             #caption = "Instrumental Variable Regression Results")
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(iv_results_2, 
+             col.names = c("Betas", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "Instrumental Variable Regression Results")
 ```
 
 
@@ -215,12 +216,12 @@ First stage and Reduced Form
 #| label: firstandreduced2
 #| tbl-cap: "First and Second Stages for Question 8 repeated"
 
-#library(kableExtra)
-#options(knitr.kable.NA = 0)
-#knitr::kable(regression_summary8_2, 
-             #col.names = c("Regression", "Coefficient", "Standard Error"),
-             #align = "c",
-             #caption = "First and Second Stage Regression Results")
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(regression_summary8_2, 
+             col.names = c("Regression", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "First and Second Stage Regression Results")
 
 ```
 
@@ -231,8 +232,6 @@ First stage and Reduced Form
 \vspace{.2in}
 \noindent 10. Compare your elasticity estimates from 1970-1990 versus those from 1991-2015. Are they different? If so, why? <br>
 
-The coefficient for log prices remains consistent across both time periods. Specifically, the coefficient for log prices is approximately -0.1715 in both regressions, indicating a similar magnitude of the price elasticity of demand for cigarettes in both periods.
+The coefficient for log prices remains consistently strongly negative across both time periods. It becomes even more negative in 1991-2015, by about 0.1 for the elasticity model, 0.2 for the IV model, and 0.3 for the reduced form. So, as time went on, the coefficients got even more negative. 
 
-The intercept values also remain consistent between the two periods, with estimated log sales of approximately 4.7504 when log prices are zero. These intercept values are highly significant in both regressions, indicating a strong positive relationship between log prices and log sales.
-
-Additionally, both sets of estimates use the total cigarette tax (ln_tax_2012) as an instrument for log prices, which helps address potential endogeneity issues. The coefficients for ln_tax_2012 are approximately -0.2843 in both regressions, suggesting a significant negative relationship between ln_tax_2012 and log prices, as expected.
+The intercept values also remain consistent between the two periods, with estimated log sales of between 4 and 5 when log prices are zero for the elasticity and IV models. These intercept values are highly significant in both regressions, indicating a strong positive relationship between log prices and log sales. For the first stage and reduced form, the intercepts are both around 1 in each time period. 

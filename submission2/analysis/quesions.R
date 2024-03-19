@@ -159,29 +159,23 @@ data_subset <- tax_data %>%
          #ln_sales=log(sales_per_capita),
          #ln_price_2012=log(price_cpi_2012))
 
-# Perform log-log regression
-elasticity_model <- lm(ln_sales ~ ln_price_2012, data = data_subset)
+model_1 <- lm(ln_sales ~ ln_price_2012, data=data_subset)
+summary(model_1)
 
-# Display regression summary
-summary(elasticity_model)
+# Tidy the regression summary for model_1
+tidy_model_1 <- broom::tidy(model_1)
 
-library(broom)
+# Store the coefficients and their standard errors for model_1
+coefficients_model_1 <- tidy_model_1$estimate
+std_errors_model_1 <- tidy_model_1$std.error
+beta_labels <- c("Beta 0", "Beta 1")
 
-# Tidy the regression summary
-tidy_summary <- tidy(elasticity_model)
+# Combine coefficients and standard errors into a data frame for model_1
+regression_table <- data.frame(Label = beta_labels, Coefficient = coefficients_model_1, `Standard Error` = std_errors_model_1)
 
-# Store the coefficients and their standard errors
-coefficients <- tidy_summary$estimate
-std_errors <- tidy_summary$std.error
-
-# Combine coefficients and standard errors into a data frame
-regression_table <- data.frame(Coefficient = coefficients, `Standard Error` = std_errors)
-
-# Add "(Intercept)" next to the first coefficient
-regression_table$Coefficient[1] <- paste("(Intercept)", regression_table$Coefficient[1])
-
-# Print the regression table
+# Print the regression table for model_1
 print(regression_table)
+
 
 #tax_data <- tax_data %>% group_by(state) %>% arrange(state, Year) %>%
   #mutate(price_cpi_2012 = cost_per_pack*(cpi_2012/index),
@@ -206,18 +200,20 @@ library(fixest)
 # Estimate the IV model
 iv_model <- feols(ln_sales ~ 1 | ln_price_2012 ~ ln_tax_2012, data = data_subset)
 
-# Extract coefficients and standard errors
-coefficients <- coef(iv_model)
-standard_errors <- sqrt(diag(vcovHC(iv_model)))
 
-# Combine coefficients and standard errors into a data frame
-iv_results <- data.frame(
-  Variable = c("(Intercept)", "ln_tax_2012"),  # Added (Intercept)
-  Coefficient = coefficients,
-  `Standard Error` = standard_errors
-)
+# Tidy the regression summary for model2
+tidy_model_iv <- broom::tidy(iv_model)
 
-# Print the results table
+# Store the coefficients and their standard errors for model2
+coefficients_model_iv <- tidy_model_iv$estimate
+std_errors_model_iv <- tidy_model_iv$std.error
+beta_labels_iv <- c("Beta 0", "Beta 1")
+
+
+# Combine coefficients and standard errors into a data frame for model2
+iv_results <- data.frame(Label = beta_labels_iv, Coefficient = coefficients_model_iv, `Standard Error` = std_errors_model_iv)
+
+# Print the regression table for model2
 print(iv_results)
 
 
@@ -276,29 +272,23 @@ data_subset_2 <- tax_data %>%
 
 data_subset_2 <- na.omit(data_subset_2)
 
-# Perform log-log regression
-elasticity_model2 <- lm(ln_sales ~ ln_price_2012, data = data_subset_2)
 
-# Display regression summary
-summary(elasticity_model2)
+model_1_2 <- lm(ln_sales ~ ln_price_2012, data=data_subset_2)
+summary(model_1_2)
 
-library(broom)
+# Tidy the regression summary for model_1
+tidy_model_1_2 <- broom::tidy(model_1_2)
 
-# Tidy the regression summary
-tidy_summary2 <- tidy(elasticity_model2)
+# Store the coefficients and their standard errors for model_1
+coefficients_model_1_2 <- tidy_model_1_2$estimate
+std_errors_model_1_2 <- tidy_model_1_2$std.error
+beta_labels2 <- c("Beta 0", "Beta 1")
 
-# Store the coefficients and their standard errors
-coefficients2 <- tidy_summary2$estimate
-std_errors2 <- tidy_summary2$std.error
+# Combine coefficients and standard errors into a data frame for model_1
+regression_table_2 <- data.frame(Label = beta_labels2, Coefficient = coefficients_model_1_2, `Standard Error` = std_errors_model_1_2)
 
-# Combine coefficients and standard errors into a data frame
-regression_table2 <- data.frame(Coefficient = coefficients2, `Standard Error` = std_errors2)
-
-# Add "(Intercept)" next to the first coefficient
-regression_table2$Coefficient[1] <- paste("(Intercept)", regression_table2$Coefficient[1])
-
-# Print the regression table
-print(regression_table2)
+# Print the regression table for model_1
+print(regression_table_2)
 
 
 ##Repeat Quesion 7
@@ -316,20 +306,22 @@ iv_model_2 <- feols(ln_sales ~ 1 | ln_price_2012 ~ ln_tax_2012, data = data_subs
 
 summary(iv_model_2)
 
-# Extract coefficients and standard errors
-coefficients7_2 <- coef(iv_model_2)
-standard_errors7_2 <- sqrt(diag(vcovHC(iv_model_2)))
 
-# Combine coefficients and standard errors into a data frame
-iv_results_2 <- data.frame(
-  Variable = c("(Intercept)", "ln_tax_2012"),  # Added (Intercept)
-  Coefficient = coefficients7_2,
-  `Standard Error` = standard_errors7_2
-)
 
-# Print the results table
-print(iv_results_2)
+# Tidy the regression summary for model2
+tidy_model_iv2 <- broom::tidy(iv_model_2)
 
+# Store the coefficients and their standard errors for model2
+coefficients_model_iv2 <- tidy_model_iv2$estimate
+std_errors_model_iv2 <- tidy_model_iv2$std.error
+beta_labels_iv2 <- c("Beta 0", "Beta 1")
+
+
+# Combine coefficients and standard errors into a data frame for model2
+iv_results_2 <- data.frame(Label = beta_labels_iv2, Coefficient = coefficients_model_iv2, `Standard Error` = std_errors_model_iv2)
+
+# Print the regression table for model2
+print(iv_results_2) 
 
 
 ##Repeat Question 8
