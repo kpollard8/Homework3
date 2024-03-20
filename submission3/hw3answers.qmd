@@ -1,0 +1,246 @@
+---
+title: "Homework 3"
+author: "Kendall Pollard"
+format:
+  pdf:
+    output-file: "pollard-k-hwk3-3"
+    output-ext:  "pdf"
+    header-includes:
+      - \usepackage{float}
+      - \floatplacement{table}{H}
+---
+
+
+```{r}
+#| include: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, readr, readxl, hrbrthemes, fixest,
+               scales, gganimate, gapminder, gifski, png, tufte, plotly, OECD,
+               ggrepel, survey, foreign, devtools, pdftools, kableExtra, modelsummary,
+               kableExtra)
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+```{r}
+#| include: false
+#| eval: true
+load("Hw3_workspace.Rdata")
+```
+
+Here is the link to my GitHub Repository: https://github.com/kpollard8/Homework3
+
+Here are my answers for Homework 3. I do the coding in a separate `R` script, but here is the cleaned-up version. I run the analysis separately, save the workspace with only the summary stats, figures, and tables that I need, and then load the workspace in the final qmd. My analysis file with answers and code to all the questions is available in the analysis folder. 
+
+\newpage 
+
+\vspace{.2in}
+\noindent 1. Present a bar graph showing the proportion of states with a change in their cigarette tax in each year from 1970 to 1985. <br>
+
+```{r}
+#| echo: false
+#| label: taxchange
+#| fig-cap: Question 1 Graph
+
+question1_graph
+```
+
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 2. Plot on a single graph the average tax (in 2012 dollars) on cigarettes and the average price of a pack of cigarettes from 1970 to 2018. <br>
+
+```{r}
+#| echo: false
+#| label: avgtax2012
+#| fig-cap: Question 2 Graph
+
+question2_graph
+```
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 3. Identify the 5 states with the highest increases in cigarette prices (in dollars) over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018. <br>
+
+```{r}
+#| echo: false
+#| label: priceincrease
+#| fig-cap: Question 3 Graph
+
+question3_graph
+```
+
+\newpage 
+
+\vspace{.2in}
+\noindent 4. Identify the 5 states with the lowest increases in cigarette prices over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018. <br>
+
+
+```{r}
+#| echo: false
+#| label: priceincreaselow
+#| fig-cap: Question 4 Graph
+
+question4_graph
+```
+
+\newpage 
+
+\vspace{.2in}
+\noindent 5. Compare the trends in sales from the 5 states with the highest price increases to those with the lowest price increases. <br>
+
+Both graphs are overall decreasing average packs sold from 1970 to 2020. However, there is a clear difference between the two from 1970 to 1980. In the states with the lowest price increases, sales were still increasing from 1970 to 1980. After 1980, sales started to decline, but at a slower rate than the 5 states with the highest price increase. This makes sense with common laws of demand and supply; demand will decrease with price increases, but at a higher rate with higher price increases. 
+
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 6. Focusing only on the time period from 1970 to 1990, regress log sales on log prices to estimate the price elasticity of demand over that period. Interpret your results. <br>
+
+regression_table
+
+```{r} 
+#| echo: false
+#| label: logs
+#| tbl-cap: "Log Regression"
+
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(regression_table, 
+             col.names=c("Betas", "Coefficients","Standard Errors"),
+             format.args=list(big.mark=","), booktabs = TRUE) %>%
+             kable_styling(latex_options=c("scale_down"))
+
+```
+
+
+The intercept (5.43) represents the estimated log sales when log prices are zero. This value is highly significant (p value very small) indicating a strong positive relationship between log prices and log sales.
+The coefficient for log prices (-0.8094384) represents the estimated change in log sales for a one percent increase in log prices. A one percent increase in pirce decreases sales by 0.809%. This coefficient is also highly significant, with another very small p value, suggesting a negative relationship between log prices and log sales.
+
+\newpage 
+
+\vspace{.2in}
+\noindent 7. Again limiting to 1970 to 1990, regress log sales on log prices using the total (federal and state) cigarette tax (in dollars) as an instrument for log prices. Interpret your results and compare your estimates to those without an instrument. Are they different? If so, why? <br>
+
+
+```{r} 
+#| echo: false
+#| label: IV
+#| tbl-cap: "IV Model for Question 7"
+
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(iv_results, 
+             col.names = c("Betas", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "Instrumental Variable Regression Results")
+```
+
+The estimated intercept is 5.42, which represents the estimated log sales when log prices are zero. This value is highly significant, with a p value close to 0, indicating a strong positive relationship between log prices and log sales when using the instrument.
+
+Coefficient for Log Prices (Price Elasticity): The estimated coefficient for log prices is -0.7955235. This coefficient represents the estimated change in log sales for a one percent increase in log prices, considering the influence of the instrument. This is again intuative because as price increases, sales would decrease, in this case by 0.79%. It is highly significant (small p value), suggesting a negative relationship between log prices and log sales, indicating that as log prices increase, log sales tend to decrease.
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 8. Show the first stage and reduced-form results from the instrument. <br>
+
+First stage and reduced form 
+```{r} 
+#| echo: false
+#| label: firstandreduced
+#| tbl-cap: "First and Second Stages for Question 8"
+
+library(kableExtra)
+options(knitr.kable.NA = "")
+knitr::kable(regression_summary8, 
+             col.names = c("Regression", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "First and Second Stage Regression Results")
+
+```
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 9. Repeat questions 1-3 focusing on the period from 1991 to 2015. <br>
+
+Question 6 repeated for 1991-2015
+
+```{r} 
+#| echo: false
+#| label: logs2
+#| tbl-cap: "Log Regression 2"
+
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(regression_table_2, 
+             col.names=c("Betas", "Coefficients","Standard Errors"),
+             format.args=list(big.mark=","), booktabs = TRUE) %>%
+             kable_styling(latex_options=c("scale_down"))
+
+```
+
+The coefficient for log prices (-0.9968136) represents the estimated change in log sales for a one percent increase in log prices. A one percent increase in pirce decreases sales by 0.99%. It is a nearly one to one realtionship in this time period. This coefficient is also highly significant, with another very small p value. 
+
+Question 7 repeated for 1991-2015
+
+
+```{r} 
+#| echo: false
+#| label: IV2
+#| tbl-cap: "IV Model for Question 7"
+
+library(kableExtra)
+options(knitr.kable.NA = 0)
+knitr::kable(iv_results_2, 
+             col.names = c("Betas", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "Instrumental Variable Regression Results")
+```
+
+The estimated coefficient for log prices is -1.150084. This coefficient represents the estimated change in log sales for a one percent increase in log prices, considering the influence of the instrument. So, sales decrease by -1.15% when price increases by 1%. So, this is an elastic good. 
+
+Question 8 repeated for 1991-2015
+
+First stage and Reduced Form 
+```{r} 
+#| echo: false
+#| label: firstandreduced2
+#| tbl-cap: "First and Second Stages for Question 8 repeated"
+
+library(kableExtra)
+options(knitr.kable.NA = "")
+knitr::kable(regression_summary8_2, 
+             col.names = c("Regression", "Coefficient", "Standard Error"),
+             align = "c",
+             caption = "First and Second Stage Regression Results")
+
+```
+
+
+
+\newpage 
+
+\vspace{.2in}
+\noindent 10. Compare your elasticity estimates from 1970-1990 versus those from 1991-2015. Are they different? If so, why? <br>
+
+The coefficient for log prices remains consistently strongly negative across both time periods. It becomes even more negative in 1991-2015, by about 0.19 for the elasticity model, 0.3 for the IV model. So, as time went on, the coefficients got even more negative, proving that the good is becoming more elastic over time. 
+
+The instrument is much stronger in the second period, which makes sense because that is when the biggest tax increases happened. 
+
+The intercept values also remain consistent between the two periods, with estimated log sales of between 4 and 5 when log prices are zero for the elasticity and IV models. These intercept values are highly significant in both regressions, indicating a strong positive relationship between log prices and log sales. For the first stage and reduced form, the intercepts are both around 1 in each time period. 
+
+This analysis is intuative because more recently, we have become aware of the health issues with cigarette smoking. It makes sense that the good is becoming more elastic because we are more aware that cigarettes are bad so we are becoming more price-sensitive. 
